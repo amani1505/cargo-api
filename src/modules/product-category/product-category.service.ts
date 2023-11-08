@@ -3,18 +3,18 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
-} from "@nestjs/common";
-import { CreateProductCategoryDto } from "./create-product-category.dto";
-import { ProductCategory } from "src/models/product-category.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { UpdateMessage } from "src/messages/update.message";
+} from '@nestjs/common';
+import { CreateProductCategoryDto } from './create-product-category.dto';
+import { ProductCategory } from 'src/models/product-category.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UpdateMessage } from 'src/messages/update.message';
 
 @Injectable()
 export class ProductCategoryService {
   constructor(
     @InjectRepository(ProductCategory)
-    private _productCategoryRepository: Repository<ProductCategory>
+    private _productCategoryRepository: Repository<ProductCategory>,
   ) {}
 
   async create(createProductCategoryDto: CreateProductCategoryDto) {
@@ -31,7 +31,7 @@ export class ProductCategoryService {
     } catch (error) {
       throw new HttpException(
         `Failed to create!:${error.message}`,
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -39,7 +39,7 @@ export class ProductCategoryService {
   async findAll(): Promise<ProductCategory[]> {
     try {
       return await this._productCategoryRepository.find({
-        relations: ["mizigo", "wateja", "products"],
+        relations: ['mizigo', 'wateja', 'products'],
       });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -50,7 +50,7 @@ export class ProductCategoryService {
     try {
       const productCategory = await this._productCategoryRepository.findOne({
         where: { id },
-        relations: ["mizigo", "wateja", "products"],
+        relations: ['mizigo', 'wateja', 'products'],
       });
       if (!productCategory) {
         throw new NotFoundException(`product category not found`);
@@ -64,7 +64,7 @@ export class ProductCategoryService {
 
   async update(
     id: string,
-    updateProductCategoryDto: CreateProductCategoryDto
+    updateProductCategoryDto: CreateProductCategoryDto,
   ): Promise<UpdateMessage> {
     try {
       const productCategory = await this._productCategoryRepository.findOne({
@@ -74,19 +74,24 @@ export class ProductCategoryService {
       if (!productCategory) {
         throw new NotFoundException(`product category not found`);
       }
-      await this._productCategoryRepository.update(id, updateProductCategoryDto);
-      return new UpdateMessage(true, "successfull update the product category");
+      await this._productCategoryRepository.update(
+        id,
+        updateProductCategoryDto,
+      );
+      return new UpdateMessage(true, 'successfull update the product category');
     } catch (error) {
       return new UpdateMessage(
         false,
-        `Failed to update product category: ${error.message}`
+        `Failed to update product category: ${error.message}`,
       );
     }
   }
 
   async remove(id: string): Promise<string> {
     try {
-      const productCategory = await this._productCategoryRepository.findOneBy({ id });
+      const productCategory = await this._productCategoryRepository.findOneBy({
+        id,
+      });
       if (!productCategory) {
         throw new NotFoundException(`product category not found`);
       }

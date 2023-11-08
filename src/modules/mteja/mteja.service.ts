@@ -21,7 +21,7 @@ export class MtejaService {
   ) {}
   async create(createMtejaDto: CreateMtejaDto) {
     try {
-      const productCategoryId = createMtejaDto.productCategoryId;
+      const productCategoryId = createMtejaDto.categoryId;
 
       const category = await this._productCategoryRepository.findOne({
         where: { id: productCategoryId },
@@ -32,7 +32,7 @@ export class MtejaService {
       }
       const mteja = this._mtejaRepository.create(createMtejaDto);
       mteja.category = category;
-      return await this._mtejaRepository.save(createMtejaDto);
+      return await this._mtejaRepository.save(mteja);
     } catch (error) {
       throw new HttpException(
         `Failed to create!:${error.message}`,
@@ -94,7 +94,7 @@ export class MtejaService {
       if (!mteja) {
         throw new NotFoundException(`mteja not found`);
       }
-      await this._productCategoryRepository.delete(id);
+      await this._mtejaRepository.delete(id);
       return `successfull remove a mteja with name ${mteja.jina_la_mteja}`;
     } catch (error) {
       return `Failed to Delete the mteja :${error.message}`;

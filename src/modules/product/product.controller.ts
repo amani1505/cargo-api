@@ -6,11 +6,11 @@ import {
   Patch,
   Param,
   Delete,
-} from "@nestjs/common";
-import { ProductService } from "./product.service";
-import { CreateProductDto } from "./create-product.dto";
+} from '@nestjs/common';
+import { ProductService } from './product.service';
+import { CreateProductDto } from './create-product.dto';
 
-@Controller("product")
+@Controller('products')
 export class ProductController {
   constructor(private readonly _productService: ProductService) {}
 
@@ -24,18 +24,18 @@ export class ProductController {
     return this._productService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Get(':id')
+  findOne(@Param('id') id: string) {
     return this._productService.findOne(id);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateProductDto: CreateProductDto) {
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateProductDto: CreateProductDto) {
     return this._productService.update(id, updateProductDto);
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this._productService.remove(id);
   }
 }

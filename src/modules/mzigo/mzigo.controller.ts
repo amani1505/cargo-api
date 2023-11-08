@@ -8,25 +8,25 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
-} from "@nestjs/common";
-import { MzigoService } from "./mzigo.service";
-import { CreateMzigoDto } from "./create-mzigo.dto";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { diskStorage } from "multer";
+} from '@nestjs/common';
+import { MzigoService } from './mzigo.service';
+import { CreateMzigoDto } from './create-mzigo.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
-@Controller("mzigo")
+@Controller('mzigo')
 export class MzigoController {
   constructor(private readonly _mzigoService: MzigoService) {}
 
   @UseInterceptors(
-    FileInterceptor("image", {
+    FileInterceptor('image', {
       storage: diskStorage({
-        destination: "uploads",
+        destination: 'uploads',
         filename: (req: any, file: any, cb: any) => {
           cb(null, `${file.originalname}`);
         },
       }),
-    })
+    }),
   )
   @Post()
   create(@Body() createMzigoDto: CreateMzigoDto, @UploadedFile() images: any) {
@@ -41,26 +41,26 @@ export class MzigoController {
     return this._mzigoService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Get(':id')
+  findOne(@Param('id') id: string) {
     return this._mzigoService.findOne(id);
   }
 
   @UseInterceptors(
-    FileInterceptor("image", {
+    FileInterceptor('image', {
       storage: diskStorage({
-        destination: "uploads",
+        destination: 'uploads',
         filename: (req: any, file: any, cb: any) => {
           cb(null, `${file.originalname}`);
         },
       }),
-    })
+    }),
   )
-  @Patch(":id")
+  @Patch(':id')
   update(
-    @Param("id") id: string,
+    @Param('id') id: string,
     @Body() updateMzigoDto: CreateMzigoDto,
-    @UploadedFile() images: any
+    @UploadedFile() images: any,
   ) {
     if (images !== null) {
       updateMzigoDto.image = images.filename;
@@ -69,8 +69,8 @@ export class MzigoController {
     return this._mzigoService.update(id, updateMzigoDto);
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this._mzigoService.remove(id);
   }
 }

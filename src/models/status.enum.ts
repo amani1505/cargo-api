@@ -1,4 +1,4 @@
 export enum Status {
-  TAKEN = "taken",
-  REMAIN = "remain",
+  TAKEN = 'taken',
+  REMAIN = 'remain',
 }

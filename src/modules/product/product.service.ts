@@ -3,13 +3,13 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
-} from "@nestjs/common";
-import { CreateProductDto } from "./create-product.dto";
-import { InjectRepository } from "@nestjs/typeorm";
-import { ProductCategory } from "src/models/product-category.entity";
-import { Repository } from "typeorm";
-import { Product } from "src/models/product.entity";
-import { UpdateMessage } from "src/messages/update.message";
+} from '@nestjs/common';
+import { CreateProductDto } from './create-product.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ProductCategory } from 'src/models/product-category.entity';
+import { Repository } from 'typeorm';
+import { Product } from 'src/models/product.entity';
+import { UpdateMessage } from 'src/messages/update.message';
 
 @Injectable()
 export class ProductService {
@@ -17,12 +17,12 @@ export class ProductService {
     @InjectRepository(Product)
     private _productRepository: Repository<Product>,
     @InjectRepository(ProductCategory)
-    private _productCategoryRepository: Repository<ProductCategory>
+    private _productCategoryRepository: Repository<ProductCategory>,
   ) {}
 
   async create(createProductDto: CreateProductDto) {
     try {
-      const productCategoryId = createProductDto.productCategoryId;
+      const productCategoryId = createProductDto.categoryId;
 
       const category = await this._productCategoryRepository.findOne({
         where: { id: productCategoryId },
@@ -33,11 +33,11 @@ export class ProductService {
       }
       const product = this._productRepository.create(createProductDto);
       product.category = category;
-      return await this._productRepository.save(createProductDto);
+      return await this._productRepository.save(product);
     } catch (error) {
       throw new HttpException(
         `Failed to create!:${error.message}`,
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -45,7 +45,7 @@ export class ProductService {
   async findAll(): Promise<Product[]> {
     try {
       return await this._productRepository.find({
-        relations: ["category"],
+        relations: ['category'],
       });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -56,7 +56,7 @@ export class ProductService {
     try {
       const product = await this._productRepository.findOne({
         where: { id },
-        relations: ["category"],
+        relations: ['category'],
       });
       if (!product) {
         throw new NotFoundException(`product not found`);
@@ -69,7 +69,7 @@ export class ProductService {
   }
   async update(
     id: string,
-    updateProductDto: CreateProductDto
+    updateProductDto: CreateProductDto,
   ): Promise<UpdateMessage> {
     try {
       const product = await this._productRepository.findOne({
@@ -79,11 +79,11 @@ export class ProductService {
         throw new NotFoundException(`product not found`);
       }
       await this._productRepository.update(id, updateProductDto);
-      return new UpdateMessage(true, "successfull update the product");
+      return new UpdateMessage(true, 'successfull update the product');
     } catch (error) {
       return new UpdateMessage(
         false,
-        `Failed to update product: ${error.message}`
+        `Failed to update product: ${error.message}`,
       );
     }
   }
@@ -94,7 +94,7 @@ export class ProductService {
       if (!product) {
         throw new NotFoundException(`product not found`);
       }
-      await this._productCategoryRepository.delete(id);
+      await this._productRepository.delete(id);
       return `successfull remove a product with name ${product.name}`;
     } catch (error) {
       return `Failed to Delete the product :${error.message}`;

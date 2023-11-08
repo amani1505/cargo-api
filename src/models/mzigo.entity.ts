@@ -1,22 +1,23 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Status } from "./status.enum";
-import { Mteja } from "./mteja.entity";
-import { ProductCategory } from "./product-category.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Mteja } from './mteja.entity';
+import { ProductCategory } from './product-category.entity';
 
-@Entity({ name: "mzigo" })
+@Entity({ name: 'mzigo' })
 export class Mzigo {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
+  @Column()
+  cargo_no: string;
   @Column()
   uzito: number;
   @Column()
   image: string;
   @Column()
   tarehe_kuingia: string;
-  @Column()
+  @Column({ nullable: true })
   tarehe_ya_kutoka: string;
   @Column({
-    default: "remain",
+    default: 'remain',
   })
   status: string;
   @ManyToOne(() => Mteja, (mteja) => mteja.mizigo)

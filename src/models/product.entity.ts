@@ -1,9 +1,9 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { ProductCategory } from "./product-category.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { ProductCategory } from './product-category.entity';
 
-@Entity({ name: "product" })
+@Entity({ name: 'product' })
 export class Product {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   name: string;

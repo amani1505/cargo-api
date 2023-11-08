@@ -6,11 +6,11 @@ import {
   Patch,
   Param,
   Delete,
-} from "@nestjs/common";
-import { MtejaService } from "./mteja.service";
-import { CreateMtejaDto } from "./create-mteja.dto";
+} from '@nestjs/common';
+import { MtejaService } from './mteja.service';
+import { CreateMtejaDto } from './create-mteja.dto';
 
-@Controller("mteja")
+@Controller('mteja')
 export class MtejaController {
   constructor(private readonly _mtejaService: MtejaService) {}
 
@@ -24,18 +24,18 @@ export class MtejaController {
     return this._mtejaService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Get(':id')
+  findOne(@Param('id') id: string) {
     return this._mtejaService.findOne(id);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateMtejaDto: CreateMtejaDto) {
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateMtejaDto: CreateMtejaDto) {
     return this._mtejaService.update(id, updateMtejaDto);
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this._mtejaService.remove(id);
   }
 }

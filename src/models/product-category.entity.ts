@@ -1,11 +1,11 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Mteja } from "./mteja.entity";
-import { Mzigo } from "./mzigo.entity";
-import { Product } from "./product.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Mteja } from './mteja.entity';
+import { Mzigo } from './mzigo.entity';
+import { Product } from './product.entity';
 
-@Entity({ name: "product-category" })
+@Entity({ name: 'product-category' })
 export class ProductCategory {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   name: string;
@@ -14,5 +14,5 @@ export class ProductCategory {
   @OneToMany(() => Mzigo, (mzigo) => mzigo.category)
   mizigo: Mzigo[];
   @OneToMany(() => Product, (product) => product.category)
-  products: Mzigo[];
+  products: Product[];
 }

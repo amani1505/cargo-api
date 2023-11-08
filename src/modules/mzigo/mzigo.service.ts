@@ -3,14 +3,14 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
-} from "@nestjs/common";
-import { CreateMzigoDto } from "./create-mzigo.dto";
-import { Mzigo } from "src/models/mzigo.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { ProductCategory } from "src/models/product-category.entity";
-import { Repository } from "typeorm";
-import { Mteja } from "src/models/mteja.entity";
-import { UpdateMessage } from "src/messages/update.message";
+} from '@nestjs/common';
+import { CreateMzigoDto } from './create-mzigo.dto';
+import { Mzigo } from 'src/models/mzigo.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ProductCategory } from 'src/models/product-category.entity';
+import { Repository } from 'typeorm';
+import { Mteja } from 'src/models/mteja.entity';
+import { UpdateMessage } from 'src/messages/update.message';
 
 @Injectable()
 export class MzigoService {
@@ -20,12 +20,20 @@ export class MzigoService {
     @InjectRepository(ProductCategory)
     private _productCategoryRepository: Repository<ProductCategory>,
     @InjectRepository(Mteja)
-    private _mtejaRepository: Repository<Mteja>
+    private _mtejaRepository: Repository<Mteja>,
   ) {}
   async create(createMzigoDto: CreateMzigoDto) {
     try {
-      const productCategoryId = createMzigoDto.productCategoryId;
+      const productCategoryId = createMzigoDto.categoryId;
       const mtejaId = createMzigoDto.mtejaId;
+      const cargoNo = createMzigoDto.cargo_no;
+
+      const cargo = await this._mzigoRepository.findOne({
+        where: { cargo_no: cargoNo },
+      });
+      if (cargo) {
+        throw new NotFoundException(`product category already exist`);
+      }
 
       const category = await this._productCategoryRepository.findOne({
         where: { id: productCategoryId },
@@ -43,12 +51,13 @@ export class MzigoService {
 
       const mzigo = this._mzigoRepository.create(createMzigoDto);
       mzigo.category = category;
+      mzigo.mteja = mteja;
 
-      return await this._mzigoRepository.save(createMzigoDto);
+      return await this._mzigoRepository.save(mzigo);
     } catch (error) {
       throw new HttpException(
         `Failed to create!:${error.message}`,
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -56,7 +65,7 @@ export class MzigoService {
   async findAll(): Promise<Mzigo[]> {
     try {
       return await this._mzigoRepository.find({
-        relations: ["category", "mteja"],
+        relations: ['category', 'mteja'],
       });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -67,7 +76,7 @@ export class MzigoService {
     try {
       const mzigo = await this._mzigoRepository.findOne({
         where: { id },
-        relations: ["category", "mteja"],
+        relations: ['category', 'mteja'],
       });
       if (!mzigo) {
         throw new NotFoundException(`mzigo not found`);
@@ -81,7 +90,7 @@ export class MzigoService {
 
   async update(
     id: string,
-    updateMzigoDto: CreateMzigoDto
+    updateMzigoDto: CreateMzigoDto,
   ): Promise<UpdateMessage> {
     try {
       const product = await this._mzigoRepository.findOne({
@@ -91,11 +100,11 @@ export class MzigoService {
         throw new NotFoundException(`mzigo not found`);
       }
       await this._mzigoRepository.update(id, updateMzigoDto);
-      return new UpdateMessage(true, "successfull update the mzigo");
+      return new UpdateMessage(true, 'successfull update the mzigo');
     } catch (error) {
       return new UpdateMessage(
         false,
-        `Failed to update mzigo: ${error.message}`
+        `Failed to update mzigo: ${error.message}`,
       );
     }
   }
