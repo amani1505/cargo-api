@@ -115,10 +115,12 @@ export class MzigoService {
       if (!mzigo) {
         throw new NotFoundException(`mzigo not found`);
       }
-      await this._productCategoryRepository.delete(id);
-      return `successfull remove a mzigo with name ${id}`;
+      await this._mzigoRepository.delete(id);
+      return JSON.stringify(
+        `successfull remove a mzigo with cargo no ${mzigo.cargo_no}`,
+      );
     } catch (error) {
-      return `Failed to Delete the mzigo :${error.message}`;
+      return JSON.stringify(`Failed to Delete the mzigo :${error.message}`);
     }
   }
 }

@@ -6,14 +6,14 @@ import {
   Patch,
   Param,
   Delete,
-} from "@nestjs/common";
-import { ProductCategoryService } from "./product-category.service";
-import { CreateProductCategoryDto } from "./create-product-category.dto";
+} from '@nestjs/common';
+import { ProductCategoryService } from './product-category.service';
+import { CreateProductCategoryDto } from './create-product-category.dto';
 
-@Controller("product-category")
+@Controller('product-category')
 export class ProductCategoryController {
   constructor(
-    private readonly _productCategoryService: ProductCategoryService
+    private readonly _productCategoryService: ProductCategoryService,
   ) {}
 
   @Post()
@@ -26,21 +26,21 @@ export class ProductCategoryController {
     return this._productCategoryService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Get(':id')
+  findOne(@Param('id') id: string) {
     return this._productCategoryService.findOne(id);
   }
 
-  @Patch(":id")
+  @Patch(':id')
   update(
-    @Param("id") id: string,
-    @Body() updateProductCategoryDto: CreateProductCategoryDto
+    @Param('id') id: string,
+    @Body() updateProductCategoryDto: CreateProductCategoryDto,
   ) {
     return this._productCategoryService.update(id, updateProductCategoryDto);
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this._productCategoryService.remove(id);
   }
 }

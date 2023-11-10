@@ -67,19 +67,31 @@ export class MtejaService {
     }
   }
 
-  async update(
-    id: string,
-    updateMtejaDto: CreateMtejaDto,
-  ): Promise<UpdateMessage> {
+  async update(id: string, updateMtejaDto: CreateMtejaDto): Promise<any> {
     try {
-      const product = await this._mtejaRepository.findOne({
+      const mteja = await this._mtejaRepository.findOne({
         where: { id },
       });
-      if (!product) {
+      if (!mteja) {
         throw new NotFoundException(`mteja not found`);
       }
-      await this._mtejaRepository.update(id, updateMtejaDto);
-      return new UpdateMessage(true, 'successfull update the mteja');
+      const productCategoryId = updateMtejaDto.categoryId;
+
+      const category = await this._productCategoryRepository.findOne({
+        where: { id: productCategoryId },
+      });
+
+      if (!category) {
+        throw new NotFoundException(`category not found`);
+      }
+
+      mteja.jina_la_mteja = updateMtejaDto.jina_la_mteja;
+      mteja.location_ya_mteja = updateMtejaDto.location_ya_mteja;
+      mteja.namba_ya_simu = updateMtejaDto.namba_ya_simu;
+      mteja.category = category;
+
+      await this._mtejaRepository.save(mteja);
+      return mteja;
     } catch (error) {
       return new UpdateMessage(
         false,
@@ -95,9 +107,11 @@ export class MtejaService {
         throw new NotFoundException(`mteja not found`);
       }
       await this._mtejaRepository.delete(id);
-      return `successfull remove a mteja with name ${mteja.jina_la_mteja}`;
+      return JSON.stringify(
+        `successfull remove a mteja with name ${mteja.jina_la_mteja}`,
+      );
     } catch (error) {
-      return `Failed to Delete the mteja :${error.message}`;
+      return JSON.stringify(`Failed to Delete the mteja :${error.message}`);
     }
   }
 }

@@ -65,7 +65,7 @@ export class ProductCategoryService {
   async update(
     id: string,
     updateProductCategoryDto: CreateProductCategoryDto,
-  ): Promise<UpdateMessage> {
+  ): Promise<any> {
     try {
       const productCategory = await this._productCategoryRepository.findOne({
         where: { id },
@@ -74,11 +74,10 @@ export class ProductCategoryService {
       if (!productCategory) {
         throw new NotFoundException(`product category not found`);
       }
-      await this._productCategoryRepository.update(
-        id,
-        updateProductCategoryDto,
-      );
-      return new UpdateMessage(true, 'successfull update the product category');
+
+      productCategory.name = updateProductCategoryDto.name;
+      await this._productCategoryRepository.save(productCategory);
+      return productCategory;
     } catch (error) {
       return new UpdateMessage(
         false,
@@ -96,9 +95,13 @@ export class ProductCategoryService {
         throw new NotFoundException(`product category not found`);
       }
       await this._productCategoryRepository.delete(id);
-      return `successfull remove a product category with  name${productCategory.name}`;
+      return JSON.stringify(
+        `successfull remove a product category with  name${productCategory.name}`,
+      );
     } catch (error) {
-      return `Failed to Delete the product category:${error.message}`;
+      return JSON.stringify(
+        `Failed to Delete the product category:${error.message}`,
+      );
     }
   }
 }

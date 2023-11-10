@@ -24,6 +24,7 @@ export class MzigoController {
         destination: 'uploads',
         filename: (req: any, file: any, cb: any) => {
           cb(null, `${file.originalname}`);
+          console.log('IMAGE', file);
         },
       }),
     }),
@@ -52,12 +53,13 @@ export class MzigoController {
         destination: 'uploads',
         filename: (req: any, file: any, cb: any) => {
           cb(null, `${file.originalname}`);
+          console.log('IMAGE', file);
         },
       }),
     }),
   )
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateMzigoDto: CreateMzigoDto,
     @UploadedFile() images: any,
@@ -66,7 +68,8 @@ export class MzigoController {
       updateMzigoDto.image = images.filename;
     }
 
-    return this._mzigoService.update(id, updateMzigoDto);
+    console.log('UPDATE DTO', updateMzigoDto);
+    return await this._mzigoService.update(id, updateMzigoDto);
   }
 
   @Delete(':id')
