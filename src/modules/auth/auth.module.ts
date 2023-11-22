@@ -8,9 +8,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/models/user.entity';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { RefreshJwtStrategy } from './strategy/refresh-token.strategy';
+import { Institute } from 'src/models/institution.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Institute]),
     JwtModule.register({
       secret: `${process.env.JWT_SECRET}`,
       signOptions: {

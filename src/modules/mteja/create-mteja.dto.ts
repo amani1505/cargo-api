@@ -3,4 +3,5 @@ export class CreateMtejaDto {
   location_ya_mteja: string;
   namba_ya_simu: string;
   categoryId: string;
+  instituteId: string;
 }

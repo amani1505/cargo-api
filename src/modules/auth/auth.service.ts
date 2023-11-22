@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/models/user.entity';
@@ -47,5 +48,14 @@ export class AuthService {
     return {
       accessToken: this._jwtService.sign(payload),
     };
+  }
+
+  async verifyToken(token: string): Promise<any> {
+    try {
+      const decoded = this._jwtService.verify(token);
+      return decoded;
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
   }
 }

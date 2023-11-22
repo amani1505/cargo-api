@@ -10,6 +10,7 @@ import { MtejaModule } from './modules/mteja/mteja.module';
 import { MzigoModule } from './modules/mzigo/mzigo.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { InstitutionModule } from './modules/institution/institution.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuthModule } from './modules/auth/auth.module';
     MzigoModule,
     UserModule,
     AuthModule,
+    InstitutionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

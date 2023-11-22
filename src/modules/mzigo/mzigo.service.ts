@@ -11,6 +11,8 @@ import { ProductCategory } from 'src/models/product-category.entity';
 import { Repository } from 'typeorm';
 import { Mteja } from 'src/models/mteja.entity';
 import { UpdateMessage } from 'src/messages/update.message';
+import { Institute } from 'src/models/institution.entity';
+import { UpdateMzigoDto } from './update-mzigo.dto';
 
 @Injectable()
 export class MzigoService {
@@ -21,26 +23,27 @@ export class MzigoService {
     private _productCategoryRepository: Repository<ProductCategory>,
     @InjectRepository(Mteja)
     private _mtejaRepository: Repository<Mteja>,
+    @InjectRepository(Institute)
+    private _instituteRepository: Repository<Institute>,
   ) {}
   async create(createMzigoDto: CreateMzigoDto) {
     try {
-      const productCategoryId = createMzigoDto.categoryId;
-      const mtejaId = createMzigoDto.mtejaId;
-      const cargoNo = createMzigoDto.cargo_no;
-
-      const cargo = await this._mzigoRepository.findOne({
-        where: { cargo_no: cargoNo },
+      const institute = await this._instituteRepository.findOne({
+        where: { id: createMzigoDto.instituteId },
       });
-      if (cargo) {
-        throw new NotFoundException(`product category already exist`);
-      }
-
+      const cargo = await this._mzigoRepository.findOne({
+        where: { cargo_no: createMzigoDto.cargo_no },
+      });
       const category = await this._productCategoryRepository.findOne({
-        where: { id: productCategoryId },
+        where: { id: createMzigoDto.categoryId },
       });
       const mteja = await this._mtejaRepository.findOne({
-        where: { id: mtejaId },
+        where: { id: createMzigoDto.mtejaId },
       });
+
+      if (cargo) {
+        throw new NotFoundException(`cargo already exist`);
+      }
 
       if (!category) {
         throw new NotFoundException(`category not found`);
@@ -48,10 +51,14 @@ export class MzigoService {
       if (!mteja) {
         throw new NotFoundException(`mteja not found`);
       }
+      if (!institute) {
+        throw new NotFoundException(`institute not found`);
+      }
 
       const mzigo = this._mzigoRepository.create(createMzigoDto);
       mzigo.category = category;
       mzigo.mteja = mteja;
+      mzigo.institute = institute;
 
       return await this._mzigoRepository.save(mzigo);
     } catch (error) {
@@ -65,18 +72,17 @@ export class MzigoService {
   async findAll(): Promise<Mzigo[]> {
     try {
       return await this._mzigoRepository.find({
-        relations: ['category', 'mteja'],
+        relations: ['category', 'mteja', 'institute'],
       });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
-
   async findOne(id: string): Promise<Mzigo> {
     try {
       const mzigo = await this._mzigoRepository.findOne({
         where: { id },
-        relations: ['category', 'mteja'],
+        relations: ['category', 'mteja', 'institute'],
       });
       if (!mzigo) {
         throw new NotFoundException(`mzigo not found`);
@@ -88,19 +94,38 @@ export class MzigoService {
     }
   }
 
-  async update(
-    id: string,
-    updateMzigoDto: CreateMzigoDto,
-  ): Promise<UpdateMessage> {
+  async update(id: string, updateMzigoDto: UpdateMzigoDto): Promise<any> {
     try {
-      const product = await this._mzigoRepository.findOne({
+      const mzigo = await this._mzigoRepository.findOne({
         where: { id },
       });
-      if (!product) {
+      if (!mzigo) {
         throw new NotFoundException(`mzigo not found`);
       }
-      await this._mzigoRepository.update(id, updateMzigoDto);
-      return new UpdateMessage(true, 'successfull update the mzigo');
+
+      const category = await this._productCategoryRepository.findOne({
+        where: { id: updateMzigoDto.categoryId },
+      });
+      const mteja = await this._mtejaRepository.findOne({
+        where: { id: updateMzigoDto.mtejaId },
+      });
+
+      if (!category) {
+        throw new NotFoundException(`category not found`);
+      }
+      if (!mteja) {
+        throw new NotFoundException(`mteja not found`);
+      }
+
+      mzigo.cargo_no = updateMzigoDto.cargo_no;
+      mzigo.status = updateMzigoDto.status;
+      mzigo.tarehe_ya_kutoka = updateMzigoDto.tarehe_ya_kutoka;
+      mzigo.uzito = updateMzigoDto.uzito;
+      mzigo.category = category;
+      mzigo.mteja = mteja;
+
+      await this._mzigoRepository.save(mzigo);
+      return mzigo;
     } catch (error) {
       return new UpdateMessage(
         false,

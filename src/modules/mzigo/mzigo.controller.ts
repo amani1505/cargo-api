@@ -13,6 +13,7 @@ import { MzigoService } from './mzigo.service';
 import { CreateMzigoDto } from './create-mzigo.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { UpdateMzigoDto } from './update-mzigo.dto';
 
 @Controller('mzigo')
 export class MzigoController {
@@ -24,7 +25,6 @@ export class MzigoController {
         destination: 'uploads',
         filename: (req: any, file: any, cb: any) => {
           cb(null, `${file.originalname}`);
-          console.log('IMAGE', file);
         },
       }),
     }),
@@ -47,28 +47,11 @@ export class MzigoController {
     return this._mzigoService.findOne(id);
   }
 
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: 'uploads',
-        filename: (req: any, file: any, cb: any) => {
-          cb(null, `${file.originalname}`);
-          console.log('IMAGE', file);
-        },
-      }),
-    }),
-  )
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateMzigoDto: CreateMzigoDto,
-    @UploadedFile() images: any,
+    @Body() updateMzigoDto: UpdateMzigoDto,
   ) {
-    if (images !== null) {
-      updateMzigoDto.image = images.filename;
-    }
-
-    console.log('UPDATE DTO', updateMzigoDto);
     return await this._mzigoService.update(id, updateMzigoDto);
   }
 

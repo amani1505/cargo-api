@@ -1,14 +1,23 @@
-import { Module } from "@nestjs/common";
-import { ProductCategoryService } from "./product-category.service";
-import { ProductCategoryController } from "./product-category.controller";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { ProductCategory } from "src/models/product-category.entity";
-import { Mteja } from "src/models/mteja.entity";
-import { Mzigo } from "src/models/mzigo.entity";
-import { Product } from "src/models/product.entity";
+import { Module } from '@nestjs/common';
+import { ProductCategoryService } from './product-category.service';
+import { ProductCategoryController } from './product-category.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductCategory } from 'src/models/product-category.entity';
+import { Mteja } from 'src/models/mteja.entity';
+import { Mzigo } from 'src/models/mzigo.entity';
+import { Product } from 'src/models/product.entity';
+import { Institute } from 'src/models/institution.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProductCategory, Mteja, Mzigo, Product])],
+  imports: [
+    TypeOrmModule.forFeature([
+      ProductCategory,
+      Mteja,
+      Mzigo,
+      Product,
+      Institute,
+    ]),
+  ],
   controllers: [ProductCategoryController],
   providers: [ProductCategoryService],
 })

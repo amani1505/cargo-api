@@ -4,13 +4,14 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from "typeorm";
-import { ProductCategory } from "./product-category.entity";
-import { Mzigo } from "./mzigo.entity";
+} from 'typeorm';
+import { ProductCategory } from './product-category.entity';
+import { Mzigo } from './mzigo.entity';
+import { Institute } from './institution.entity';
 
-@Entity({ name: "mteja" })
+@Entity({ name: 'mteja' })
 export class Mteja {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   jina_la_mteja: string;
@@ -22,4 +23,6 @@ export class Mteja {
   category: ProductCategory;
   @OneToMany(() => Mzigo, (mzigo) => mzigo.mteja)
   mizigo: Mzigo[];
+  @ManyToOne(() => Institute, (institute) => institute.wateja)
+  institute: Institute;
 }

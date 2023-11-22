@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Mteja } from './mteja.entity';
 import { ProductCategory } from './product-category.entity';
+import { Institute } from './institution.entity';
 
 @Entity({ name: 'mzigo' })
 export class Mzigo {
@@ -24,4 +25,6 @@ export class Mzigo {
   mteja: Mteja;
   @ManyToOne(() => ProductCategory, (category) => category.mizigo)
   category: ProductCategory;
+  @ManyToOne(() => Institute, (institute) => institute.mizigo)
+  institute: Institute;
 }

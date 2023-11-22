@@ -9,25 +9,34 @@ import { ProductCategory } from 'src/models/product-category.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateMessage } from 'src/messages/update.message';
+import { Institute } from 'src/models/institution.entity';
 
 @Injectable()
 export class ProductCategoryService {
   constructor(
     @InjectRepository(ProductCategory)
     private _productCategoryRepository: Repository<ProductCategory>,
+    @InjectRepository(Institute)
+    private _instituteRepository: Repository<Institute>,
   ) {}
 
   async create(createProductCategoryDto: CreateProductCategoryDto) {
     try {
-      const productCategory = await this._productCategoryRepository.findOne({
-        where: { name: createProductCategoryDto.name },
+      // const productCategory = await this._productCategoryRepository.findOne({
+      //   where: { name: createProductCategoryDto.name },
+      // });
+      const institute = await this._instituteRepository.findOne({
+        where: { id: createProductCategoryDto.instituteId },
       });
+      // if (productCategory) {
+      //   throw new NotFoundException(`product category already exist`);
+      // }
+      const productCategoryData = this._productCategoryRepository.create(
+        createProductCategoryDto,
+      );
 
-      if (productCategory) {
-        throw new NotFoundException(`product category already exist`);
-      }
-
-      return this._productCategoryRepository.save(createProductCategoryDto);
+      productCategoryData.institute = institute;
+      return await this._productCategoryRepository.save(productCategoryData);
     } catch (error) {
       throw new HttpException(
         `Failed to create!:${error.message}`,
@@ -39,7 +48,7 @@ export class ProductCategoryService {
   async findAll(): Promise<ProductCategory[]> {
     try {
       return await this._productCategoryRepository.find({
-        relations: ['mizigo', 'wateja', 'products'],
+        relations: ['mizigo', 'wateja', 'products', 'institute'],
       });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -50,7 +59,7 @@ export class ProductCategoryService {
     try {
       const productCategory = await this._productCategoryRepository.findOne({
         where: { id },
-        relations: ['mizigo', 'wateja', 'products'],
+        relations: ['mizigo', 'wateja', 'products', 'institute'],
       });
       if (!productCategory) {
         throw new NotFoundException(`product category not found`);
@@ -70,12 +79,15 @@ export class ProductCategoryService {
       const productCategory = await this._productCategoryRepository.findOne({
         where: { id },
       });
-
+      const institute = await this._instituteRepository.findOne({
+        where: { id: updateProductCategoryDto.instituteId },
+      });
       if (!productCategory) {
         throw new NotFoundException(`product category not found`);
       }
 
       productCategory.name = updateProductCategoryDto.name;
+      productCategory.institute = institute;
       await this._productCategoryRepository.save(productCategory);
       return productCategory;
     } catch (error) {

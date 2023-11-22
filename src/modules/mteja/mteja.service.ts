@@ -10,6 +10,7 @@ import { ProductCategory } from 'src/models/product-category.entity';
 import { CreateMtejaDto } from './create-mteja.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Institute } from 'src/models/institution.entity';
 
 @Injectable()
 export class MtejaService {
@@ -18,20 +19,27 @@ export class MtejaService {
     private _mtejaRepository: Repository<Mteja>,
     @InjectRepository(ProductCategory)
     private _productCategoryRepository: Repository<ProductCategory>,
+    @InjectRepository(Institute)
+    private _instituteRepository: Repository<Institute>,
   ) {}
   async create(createMtejaDto: CreateMtejaDto) {
     try {
-      const productCategoryId = createMtejaDto.categoryId;
-
       const category = await this._productCategoryRepository.findOne({
-        where: { id: productCategoryId },
+        where: { id: createMtejaDto.categoryId },
+      });
+      const institute = await this._instituteRepository.findOne({
+        where: { id: createMtejaDto.instituteId },
       });
 
       if (!category) {
         throw new NotFoundException(`category not found`);
       }
+      if (!institute) {
+        throw new NotFoundException(`institute not found`);
+      }
       const mteja = this._mtejaRepository.create(createMtejaDto);
       mteja.category = category;
+      mteja.institute = institute;
       return await this._mtejaRepository.save(mteja);
     } catch (error) {
       throw new HttpException(
@@ -44,7 +52,7 @@ export class MtejaService {
   async findAll(): Promise<Mteja[]> {
     try {
       return await this._mtejaRepository.find({
-        relations: ['category'],
+        relations: ['category', 'institute'],
       });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -55,7 +63,7 @@ export class MtejaService {
     try {
       const mteja = await this._mtejaRepository.findOne({
         where: { id },
-        relations: ['category'],
+        relations: ['category', 'institute'],
       });
       if (!mteja) {
         throw new NotFoundException(`mteja not found`);
@@ -75,20 +83,26 @@ export class MtejaService {
       if (!mteja) {
         throw new NotFoundException(`mteja not found`);
       }
-      const productCategoryId = updateMtejaDto.categoryId;
+      const institute = await this._instituteRepository.findOne({
+        where: { id: updateMtejaDto.instituteId },
+      });
 
       const category = await this._productCategoryRepository.findOne({
-        where: { id: productCategoryId },
+        where: { id: updateMtejaDto.categoryId },
       });
 
       if (!category) {
         throw new NotFoundException(`category not found`);
+      }
+      if (!institute) {
+        throw new NotFoundException(`institute not found`);
       }
 
       mteja.jina_la_mteja = updateMtejaDto.jina_la_mteja;
       mteja.location_ya_mteja = updateMtejaDto.location_ya_mteja;
       mteja.namba_ya_simu = updateMtejaDto.namba_ya_simu;
       mteja.category = category;
+      mteja.institute = institute;
 
       await this._mtejaRepository.save(mteja);
       return mteja;

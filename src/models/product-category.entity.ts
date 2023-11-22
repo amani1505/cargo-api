@@ -1,7 +1,14 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Mteja } from './mteja.entity';
 import { Mzigo } from './mzigo.entity';
 import { Product } from './product.entity';
+import { Institute } from './institution.entity';
 
 @Entity({ name: 'product-category' })
 export class ProductCategory {
@@ -15,4 +22,6 @@ export class ProductCategory {
   mizigo: Mzigo[];
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
+  @ManyToOne(() => Institute, (institute) => institute.productCategories)
+  institute: Institute;
 }

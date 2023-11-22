@@ -3,4 +3,6 @@ export class CreateUserDto {
   email: string;
   mobile_number: string;
   password: string;
+  role?: string;
+  instituteId: string;
 }

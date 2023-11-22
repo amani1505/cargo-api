@@ -7,4 +7,5 @@ export class CreateMzigoDto {
   status: string;
   mtejaId: string;
   categoryId: string;
+  instituteId?: string;
 }
